@@ -1,5 +1,9 @@
 # Projeto Micro Fórum
 
+
+![Animação](/mini-forum-gif.gif)
+
+
 Um aplicativo web simples inspirado em um micro Reddit, permitindo que usuários criem contas, publiquem posts, comentem e editem/excluam seus próprios posts. O projeto é composto por um frontend em Vue.js e um backend em Node.js com Express e SQLite, projetado para ser leve, seguro e fácil de usar.
 
 ---
