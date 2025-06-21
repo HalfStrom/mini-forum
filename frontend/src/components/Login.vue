@@ -40,7 +40,7 @@
                         this.isRegister = false;
                     } else {
                         localStorage.setItem('token', response.data.token);
-                        this.$router.push('/');
+                        this.$router.push('/posts');
                     }
                 } catch (error) {
                     alert(error.response?.data?.error || 'Erro ao processar');

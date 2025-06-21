@@ -40,22 +40,47 @@
         Logout
       </button>
     </nav>
-    <router-view></router-view>
+    <router-view @auto-changed="handleAuthChange"></router-view>
   </div>
 </template>
 
 <script>
+import { ref, onMounted, onUnmounted } from 'vue';
+
 export default {
-  computed: {
-    isLoggedIn() {
-      return !!localStorage.getItem('token');
-    },
-  },
-  methods: {
-    logout() {
+  setup () {
+    const isLoggedIn = ref(!!localStorage.getItem('token'));
+
+    const updateAuthStatus = () => {
+      console.log('Atualizando estado de autenticação:', !!localStorage.getItem('token'));
+      isLoggedIn.value = !!localStorage.getItem('token');
+    };
+
+    const handleStorageChange = (event) => {
+      if (event.key === 'token') {
+        updateAuthStatus();
+      }
+    };
+
+    onMounted(() => {
+      window.addEventListener('storage', handleStorageChange);
+      updateAuthStatus();
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener('storage', handleStorageChange);
+    });
+
+    const logout = () => {
       localStorage.removeItem('token');
-      this.$router.push('/login');
-    },
+      updateAuthStatus();
+      this.$router.push('/posts');
+    };
+
+    return {
+      isLoggedIn,
+      logout,
+    };
   },
 };
 </script>
