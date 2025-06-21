@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="card">
         <h2>{{ isRegister ? 'Registrar' : 'Login' }}</h2>
         <form @submit.prevent="handleSubmit">
             <input v-model="username" type="text" placeholder="Usuário" required />
@@ -51,15 +51,8 @@
 </script>
 
 <style scoped>
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-width: 300px;
-    }
-
-    input,
-    button {
-        padding: 8px;
+    p {
+        margin-top: 1rem;
+        text-align: center;
     }
 </style>

@@ -27,6 +27,5 @@
 </script>
 
 <style scoped>
-.container { max-width: 800px; margin: 0 auto; padding: 20px; }
-nav { margin-bottom: 20px; }
+.container { width: 100% }
 </style>

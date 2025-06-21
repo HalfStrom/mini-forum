@@ -1,11 +1,12 @@
 <template>
     <div>
         <h2>Posts</h2>
-        <div v-for="post in posts" :key="post.id" class="post">
+        <div v-if="error" class="error">{{ error }}</div>
+        <div v-for="post in posts" :key="post.id" class="card">
             <h3>{{ post.title }}</h3>
             <p>{{ post.content }}</p>
-            <small>Por: {{ post.username }}</small>
-            <div v-if="isLoggedIn && post.userId === userId">
+            <small>Por: {{ post.username }} em {{ new Date(post.createdAt).toLocaleString() }}</small>
+            <div v-if="isLoggedIn && post.userId === userId" class="actions">
                 <router-link :to="`/edit-post/${post.id}`">Editar</router-link> |
                 <button @click="deletePost(post.id)">Excluir</button>
             </div>
@@ -57,5 +58,9 @@ export default {
 </script>
 
 <style scoped>
-    .post { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    .actions {
+        margin-top: 1rem;
+        display: flex;
+        gap: 0.5rem;
+    }
 </style>

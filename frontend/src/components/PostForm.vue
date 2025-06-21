@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="card">
         <h2>{{ isEdit ? 'Editar Post' : 'Criar Post' }}</h2>
         <form @submit.prevent="handleSubmit">
             <input v-model="title" type="text" placeholder="Título" required />
@@ -58,7 +58,5 @@ export default {
 </script>
 
 <style scoped>
-    form { display: flex; flex-direction: column; gap: 10px; max-width: 500px; }
-    input, textarea { padding: 8px; }
-    textarea { height: 100px; }
+    
 </style>
