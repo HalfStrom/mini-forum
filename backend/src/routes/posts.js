@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
 const db = require('../database');
 const authenticate = require('../middleware/auth');
-const router = express.Route();
+const router = express.Router();
 
 // Listar posts com comentários
 router.get('/', (req, res) => {
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
                 ) FROM comments
                 JOIN users u2 ON comments.userId = u2.id
                 WHERE comments.postId = posts.id) as comments
-         FROM post
+         FROM posts
          JOIN users ON posts.userId = users.id
          ORDER BY posts.createdAt DESC`,
          (err, rows) => {

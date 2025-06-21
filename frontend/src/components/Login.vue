@@ -28,7 +28,7 @@
         methods: {
             async handleSubmit() {
                 try {
-                    const endpoint = this.isRegister ? '/api/register' : '/api/login';
+                    const endpoint = this.isRegister ? '/api/auth/register' : '/api/auth/login';
                     const response = await axios.post(`http://localhost:3000${endpoint}`,
                         {
                             username: this.username,

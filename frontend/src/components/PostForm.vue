@@ -24,8 +24,7 @@ export default {
         if (this.$route.params.id) {
             this.isEdit = true;
             try {
-                const response = await axios.get(`http://localhost:3000/api/posts/$
-                {this.$route.params.id}`, {
+                const response = await axios.get(`http://localhost:3000/api/posts/${this.$route.params.id}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
                 this.title = response.data.title;
@@ -38,7 +37,7 @@ export default {
     methods: {
         async handleSubmit() {
             try {
-                const paylod = { title: this.title, content: this.content };
+                const payload = { title: this.title, content: this.content };
                 const headers = { Authorization: `Bearer ${localStorage.getItem('token')}` };
 
                 if (this.isEdit) {
