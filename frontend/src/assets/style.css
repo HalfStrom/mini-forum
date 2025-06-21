@@ -27,7 +27,7 @@ body {
 }
 
 #app {
-  max-width: 960px; /* Reduzido para layout mais compacto */
+  max-width: 960px;
   margin: 0 auto;
   padding: 1.5rem;
   width: 100%;
@@ -45,7 +45,7 @@ a:hover {
 }
 
 h1 {
-  font-size: 2.5rem; /* Ajustado para elegância */
+  font-size: 2.5rem;
   line-height: 1.2;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -132,13 +132,40 @@ textarea {
 
 nav {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
+  align-items: center;
   justify-content: center;
   margin-bottom: 2rem;
-  padding: 1rem;
+  padding: 0.75rem;
   background-color: #1a1a1a;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.87);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background-color: #2a2a2a;
+  color: #646cff;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .error {
@@ -179,6 +206,13 @@ nav {
   nav {
     background-color: #ffffff;
   }
+  .nav-link {
+    color: #213547;
+  }
+  .nav-link:hover {
+    background-color: #f0f0f0;
+    color: #747bff;
+  }
 }
 
 @media (max-width: 600px) {
@@ -192,6 +226,14 @@ nav {
     font-size: 1.5rem;
   }
   button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  nav {
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+  .nav-link {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
   }

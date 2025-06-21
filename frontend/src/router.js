@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import Home from './components/Home.vue';
 import Login from './components/Login.vue';
-import PostList from './components/PostList.vue';
+import Posts from './components/Posts.vue';
 import PostForm from './components/PostForm.vue';
 
 const routes = [
-    { path: '/', component: PostList },
+    { path: '/', component: Home },
+    { path: '/posts', component: Posts},
     { path: '/login', component: Login },
     { path: '/create-post', component: PostForm },
     { path: '/edit-post/:id', component: PostForm },
