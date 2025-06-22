@@ -1,104 +1,167 @@
 const express = require('express');
+const router = express.Router();
+const db = require('../database');
 const { body, validationResult } = require('express-validator');
 const sanitizeHtml = require('sanitize-html');
-const db = require('../database');
-const authenticate = require('../middleware/auth');
-const router = express.Router();
+const authenticateToken = require('../middleware/auth');
 
-// Listar posts com comentários
+// Listar todos os posts
 router.get('/', (req, res) => {
-    db.all(
-        `SELECT posts.*, users.username,
-                (SELECT json_group_array(
-                    json_object('id', comments.id, 'content', comments.content,
-                    'username', u2.username, 'createdAt', comments.createdAt)
-                ) FROM comments
-                JOIN users u2 ON comments.userId = u2.id
-                WHERE comments.postId = posts.id) as comments
-         FROM posts
-         JOIN users ON posts.userId = users.id
-         ORDER BY posts.createdAt DESC`,
-         (err, rows) => {
-            if (err) return res.status(500).json({ error: 'Erro ao buscar posts' });
-            res.json(rows.map(row => ({
-                ...row,
-                comments: JSON.parse(row.comments)
-            })));
-         }
-    );
+  console.log('GET /api/posts chamado');
+  db.all('SELECT id, title, content, userId, username, createdAt FROM posts ORDER BY createdAt DESC', [], (err, rows) => {
+    if (err) {
+      console.error('Erro ao listar posts:', err);
+      return res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+    console.log(`Posts encontrados: ${rows.length}`);
+    res.json(rows);
+  });
+});
+
+// Obter post por ID
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  console.log(`GET /api/posts/${id} chamado`);
+  db.get('SELECT id, title, content, userId, username, createdAt FROM posts WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      console.error('Erro ao obter post:', err);
+      return res.status(500).json({ error: 'Erro interno do servidor' });
+    }
+    if (!row) {
+      return res.status(404).json({ error: 'Post não encontrado' });
+    }
+    res.json(row);
+  });
 });
 
 // Criar post
 router.post(
-    '/',
-    authenticate,
-    [
-        body('title').isLength({ min: 3, max: 100 }).trim().escape(),
-        body('content').isLength({ min: 1}).trim(),
-    ],
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
-        const { title, content } = req.body;
-        const sanitizedContent = sanitizeHtml(content);
-        db.run(
-            `INSERT INTO posts (title, content, userId) VALUES (?, ?, ?)`,
-            [title, sanitizedContent, req.userId],
-            (err) => {
-                if (err) return res.status(500).json({ error: 'Erro ao criar post' });
-                res.status(201).json({ message: 'Post criado' });
-            }
-        );
+  '/',
+  authenticateToken,
+  [
+    body('title').notEmpty().withMessage('Título é obrigatório'),
+    body('content').notEmpty().withMessage('Conteúdo é obrigatório'),
+  ],
+  (req, res) => {
+    console.log('POST /api/posts chamado:', req.body);
+    if (!req.user) {
+      console.error('req.user não definido após autenticação');
+      return res.status(401).json({ error: 'Usuário não autenticado' });
     }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log('Erros de validação:', errors.array());
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { title, content } = req.body;
+    const sanitizedTitle = sanitizeHtml(title, { allowedTags: [], allowedAttributes: {} });
+    const sanitizedContent = sanitizeHtml(content, { allowedTags: [], allowedAttributes: {} });
+    if (sanitizedTitle.length < 1 || sanitizedContent.length < 1) {
+      console.log('Dados inválidos após sanitização:', { sanitizedTitle, sanitizedContent });
+      return res.status(400).json({ error: 'Título ou conteúdo inválido após sanitização' });
+    }
+    const createdAt = new Date().toISOString();
+    console.log('Tentando inserir post:', {
+      title: sanitizedTitle,
+      content: sanitizedContent,
+      userId: req.user.userId,
+      username: req.user.username,
+      createdAt,
+    });
+    db.run(
+      'INSERT INTO posts (title, content, userId, username, createdAt) VALUES (?, ?, ?, ?, ?)',
+      [sanitizedTitle, sanitizedContent, req.user.userId, req.user.username, createdAt],
+      function (err) {
+        if (err) {
+          console.error('Erro ao inserir post:', err);
+          return res.status(500).json({ error: 'Erro ao criar post: ' + err.message });
+        }
+        console.log(`Post criado com ID: ${this.lastID}`);
+        res.status(201).json({
+          id: this.lastID,
+          title: sanitizedTitle,
+          content: sanitizedContent,
+          userId: req.user.userId,
+          username: req.user.username,
+          createdAt,
+        });
+      }
+    );
+  }
 );
 
 // Atualizar post
 router.put(
-    '/:id',
-    authenticate,
-    [
-        body('title').isLength({ min: 3, max: 100 }).trim().escape(),
-        body('content').isLength({ min: 1 }),
-    ],
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    
-        const { title, content } = req.body;
-        const postId = req.params.id;
-        const sanitizedContent = sanitizeHtml(content);
-
-        db.get(`SELECT userId FROM posts WHERE id = ?`, [postId], (err, post) => 
-        {
-            if (err || !post) return res.status(404).json({ error: 'Post não encontrado' });
-            if (post.userId !== req.userId) return res.status(403).json({ error: 'Acesso negado' });
-
-            db.run(
-                `UPDATE posts SET title = ?, content = ? WHERE id = ?`,
-                [title, sanitizedContent, postId],
-                (err) => {
-                    if (err) return res.status(500).json({ error: 'Erro ao atualizar post' });
-                    res.json({ message: 'Post atualizado '});
-                }
-            );
-        });
+  '/:id',
+  authenticateToken,
+  [
+    body('title').notEmpty().withMessage('Título é obrigatório'),
+    body('content').notEmpty().withMessage('Conteúdo é obrigatório'),
+  ],
+  (req, res) => {
+    console.log(`PUT /api/posts/${req.params.id} chamado`);
+    if (!req.user) {
+      console.error('req.user não definido após autenticação');
+      return res.status(401).json({ error: 'Usuário não autenticado' });
     }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log('Erros de validação:', errors.array());
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const sanitizedTitle = sanitizeHtml(title, { allowedTags: [], allowedAttributes: {} });
+    const sanitizedContent = sanitizeHtml(content, { allowedTags: [], allowedAttributes: {} });
+    db.get('SELECT userId FROM posts WHERE id = ?', [id], (err, post) => {
+      if (err || !post) {
+        console.error('Post não encontrado:', err || 'Nenhum post encontrado');
+        return res.status(404).json({ error: 'Post não encontrado' });
+      }
+      if (post.userId !== req.user.userId) {
+        return res.status(403).json({ error: 'Permissão negada' });
+      }
+      db.run(
+        'UPDATE posts SET title = ?, content = ? WHERE id = ?',
+        [sanitizedTitle, sanitizedContent, id],
+        (err) => {
+          if (err) {
+            console.error('Erro ao atualizar post:', err);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+          }
+          console.log(`Post ${id} atualizado`);
+          res.json({ id, title: sanitizedTitle, content: sanitizedContent });
+        }
+      );
+    });
+  }
 );
 
-// Deletar post
-router.delete('/:id', authenticate, (req, res) => {
-    const postId = req.params.id;
-
-    db.get(`SELECT userId FROM posts WHERE id = ?`, [postId], (err, post) => {
-        if (err || !post) return res.status(404).json({ error: 'Post não encontrado' });
-        if (post.userId !== req.userId) return res.status(403).json({ error: 'Acesso negado'});
-
-        db.run(`DELETE FROM posts WHERE id = ?`, [postId], (err) => {
-            if (err) return res.status(500).json({ error: 'Erro ao deletar post' });
-            res.json({ message: 'Post deletado' });
-        });
+// Excluir post
+router.delete('/:id', authenticateToken, (req, res) => {
+  console.log(`DELETE /api/posts/${id} chamado`);
+  if (!req.user) {
+    console.error('req.user não definido após autenticação');
+    return res.status(401).json({ error: 'Usuário não autenticado' });
+  }
+  const { id } = req.params;
+  db.get('SELECT userId FROM posts WHERE id = ?', [id], (err, post) => {
+    if (err || !post) {
+      console.error('Post não encontrado:', err || 'Nenhum post encontrado');
+      return res.status(404).json({ error: 'Post não encontrado' });
+    }
+    if (post.userId !== req.user.userId) {
+      return res.status(403).json({ error: 'Permissão negada' });
+    }
+    db.run('DELETE FROM posts WHERE id = ?', [id], (err) => {
+      if (err) {
+        console.error('Erro ao excluir post:', err);
+        return res.status(500).json({ error: 'Erro interno do servidor' });
+      }
+      console.log(`Post ${id} excluído`);
+      res.status(204).send();
     });
+  });
 });
 
 module.exports = router;

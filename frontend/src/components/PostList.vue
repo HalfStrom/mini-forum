@@ -15,62 +15,68 @@
                 <router-link :to="`/edit-post/${post.id}`">Editar</router-link> |
                 <button @click="deletePost(post.id)">Excluir</button>
             </div>
+            <comment :post-id="post.id" />
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+    import axios from 'axios';
+    import { jwtDecode } from 'jwt-decode';
+    import Comment from './Comment.vue'
 
-export default {
-    data() {
-        return {
-            posts: [],
-            error: null,
-        };
-    },
-   computed: {
-        isLoggedIn() {
-            return !!localStorage.getItem('token');
+    export default {
+        components: {
+            Comment,
         },
-        userId() {
-            const token = localStorage.getItem('token');
-            return token ? jwtDecode(token).userId : null;
+        data() {
+            return {
+                posts: [],
+                error: null,
+            };
         },
-   },
-   watch: {
-    isLoggedIn(newValue, oldValue) {
-        this.loadPosts();
-    },
-   },
-   mounted() {
-      this.loadPosts();
-   },
-   methods: {
-        async loadPosts() {
-            try {
-                const response = await axios.get('http://localhost:3000/api/posts');
-                this.posts = response.data;
-                this.error = null;
-            } catch (error) {
-                console.error('Erro ao carregar posts:', error.response);
-                this.error = error.response?.data?.error || 'Erro ao carregar posts';
-            }
+        computed: {
+            isLoggedIn() {
+                return !!localStorage.getItem('token');
+            },
+            userId() {
+                const token = localStorage.getItem('token');
+                return token ? jwtDecode(token).userId : null;
+            },
         },
-        async deletePost(id) {
-            try {
-                await axios.delete(`http://localhost:3000/api/posts/${id}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}`
-                    },
-                });
-                this.posts = this.posts.filter((post) => post.id !== id);
-            } catch (error) {
-                alert(error.response?.data?.error || 'Erro ao excluir post');
-            }
+        watch: {
+            isLoggedIn(newValue, oldValue) {
+                this.loadPosts();
+            },
         },
-   },
-};
+        mounted() {
+            this.loadPosts();
+        },
+        methods: {
+            async loadPosts() {
+                try {
+                    const response = await axios.get('http://localhost:3000/api/posts');
+                    this.posts = response.data;
+                    this.error = null;
+                } catch (error) {
+                    console.error('Erro ao carregar posts:', error.response);
+                    this.error = error.response?.data?.error || 'Erro ao carregar posts';
+                }
+            },
+            async deletePost(id) {
+                try {
+                    await axios.delete(`http://localhost:3000/api/posts/${id}`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        },
+                    });
+                    this.posts = this.posts.filter((post) => post.id !== id);
+                } catch (error) {
+                    alert(error.response?.data?.error || 'Erro ao excluir post');
+                }
+            },
+        },
+    };
 </script>
 
 <style scoped>
@@ -79,6 +85,7 @@ export default {
         display: flex;
         gap: 0.5rem;
     }
+
     .post-icon {
         width: 24px;
         height: 24px;

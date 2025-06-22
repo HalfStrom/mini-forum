@@ -1,13 +1,22 @@
 const jwt = require('jsonwebtoken');
-const secretKey = 'testando123' // Substitua por uma chave segura (use env vars em produção)
 
 module.exports = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ error: 'Token não fornecido' });
-    
-    jwt.verify(token, secretKey, (err, decoded) => {
-        if (err) return res.status(401).json({ error: 'Token inválido' });
-        req.userId = decoded.userId;
-        next();
-    });
+  console.log('Middleware authenticateToken chamado');
+  const authHeader = req.headers.authorization;
+  console.log('Cabeçalho de autorização:', authHeader);
+  if (!authHeader) {
+    console.log('Erro: Token não fornecido');
+    return res.status(401).json({ error: 'Token não fornecido' });
+  }
+  const token = authHeader.replace('Bearer ', '').trim();
+  console.log('Token extraído:', token);
+  try {
+    const decoded = jwt.verify(token, 'my_secure_jwt_secret');
+    console.log('Token decodificado:', decoded);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    console.error('Erro ao verificar token:', err.message);
+    return res.status(401).json({ error: 'Token inválido', details: err.message });
+  }
 };

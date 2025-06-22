@@ -1,26 +1,33 @@
 const express = require('express');
-const helmet = require('helmet');
 const cors = require('cors');
+const helmet = require('helmet');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
+
 const app = express();
-const port = 3000;
 
-// Middleware
 app.use(helmet());
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+app.use(cors());
 app.use(express.json());
-app.use(express.static('../frontend/dist')); // Serve o frontend buildado (em produção)
 
-// Rotas
+console.log('Registrando rotas...');
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 
-// Iniciar servidor
-app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
+app.use((req, res, next) => {
+  console.log(`Requisição recebida: ${req.method} ${req.url}`);
+  next();
+});
+
+// Middleware de tratamento de erros
+app.use((err, req, res, next) => {
+  console.error('Erro não tratado:', err.stack);
+  res.status(500).json({ error: 'Erro interno do servidor', details: err.message });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
