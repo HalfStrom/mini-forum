@@ -32,6 +32,17 @@ db.serialize(() => {
       FOREIGN KEY (postId) REFERENCES posts(id)
     )
   `);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      senderId INTEGER NOT NULL,
+      receiverId INTEGER NOT NULL,
+      content TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      FOREIGN KEY (senderId) REFERENCES users(id),
+      FOREIGN KEY (receiverId) REFERENCES users(id)
+    )
+  `);
 });
 
 module.exports = db;
