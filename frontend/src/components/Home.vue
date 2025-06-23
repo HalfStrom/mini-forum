@@ -24,7 +24,7 @@
     </section>
 
     <div class="landing-actions">
-      <router-link to="/posts" class="btn">Ver Posts</router-link>
+      <router-link to="/posts" class="btn primary">Ver Posts</router-link>
       <router-link v-if="!isLoggedIn" to="/login" class="btn secondary">Registrar</router-link>
     </div>
 
@@ -35,11 +35,12 @@
 </template>
 
 <script>
+import { useAuthStore } from '../stores/authStore';
+
 export default {
-  computed: {
-    isLoggedIn() {
-      return !!localStorage.getItem('token');
-    },
+  setup() {
+    const { isLoggedIn } = useAuthStore();
+    return { isLoggedIn };
   },
 };
 </script>

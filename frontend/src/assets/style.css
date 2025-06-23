@@ -175,6 +175,80 @@ nav {
   margin-bottom: 1rem;
 }
 
+/* Estilos para a página de perfil */
+.profile-container {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.profile-picture {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+}
+
+.profile-placeholder {
+  width: 150px;
+  height: 150px;
+  background-color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  color: #aaa;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.upload-form input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: 1px solid #0077b6;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: #0077b6;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.custom-file-upload:hover {
+  background-color: #0077b6;
+  color: white;
+}
+
+.file-name {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #ccc;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  color: #aaa;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -213,6 +287,17 @@ nav {
     background-color: #f0f0f0;
     color: #747bff;
   }
+  /* Estilos de perfil para tema claro */
+  .profile-img {
+    border: 1px solid #ccc;
+  }
+  .profile-placeholder {
+    background-color: #ddd;
+    color: #555;
+  }
+  .form-group label {
+    color: #555;
+  }
 }
 
 @media (max-width: 600px) {
@@ -239,5 +324,10 @@ nav {
   .nav-link {
     padding: 0.4rem 0.8rem;
     font-size: 0.9rem;
+  }
+  .profile-img,
+  .profile-placeholder {
+    width: 120px;
+    height: 120px;
   }
 }

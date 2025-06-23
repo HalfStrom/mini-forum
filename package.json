@@ -1,0 +1,16 @@
+{
+  "name": "micro-forum",
+  "version": "1.0.0",
+  "description": "Micro forum para discussão de ideias",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev:backend": "cd backend && npm start",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "dependencies": {
+    "emoji-picker-element": "^1.26.3",
+    "concurrently": "^8.2.2"
+  }
+}

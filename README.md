@@ -1,112 +1,128 @@
-# Projeto Micro Fórum
+# Micro Fórum
 
+![GIF](/mini-forum-gif.gif)
 
-![Animação](/mini-forum-gif.gif)
+Um fórum moderno e leve para discussão de ideias.
 
+## 🚀 Funcionalidades
 
-Um aplicativo web simples inspirado em um micro Reddit, permitindo que usuários criem contas, publiquem posts, comentem e editem/excluam seus próprios posts. O projeto é composto por um frontend em Vue.js e um backend em Node.js com Express e SQLite, projetado para ser leve, seguro e fácil de usar.
+### Sistema de Posts
+- ✅ Criação e visualização de posts em tempo real
+- ✅ Sistema de comentários
+- ✅ Busca avançada de posts e usuários
+- ✅ Interface responsiva e moderna
 
----
+### Autenticação e Perfil
+- ✅ Login seguro com autenticação JWT
+- ✅ Painel de usuário com métricas e histórico
+- ✅ Upload de foto de perfil
+- ✅ Sistema de registro e login
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias
 
-- **Frontend:** Vue.js, Vue Router, Axios  
-- **Backend:** Node.js, Express, SQLite  
-- **Segurança:** JWT para autenticação, express-validator e sanitize-html para validação e sanitização  
-- **Outros:** Vite (frontend build), CORS, Helmet
+### Backend
+- **Node.js** com Express
+- **SQLite** com Knex.js para ORM
+- **JWT** para autenticação
+- **Multer** para upload de arquivos
+- **Sanitize-html** para segurança
 
----
+### Frontend
+- **Vue.js 3** com Composition API
+- **Vue Router** para navegação
+- **Pinia** para gerenciamento de estado
+- **Axios** para requisições HTTP
+- **CSS3** com design responsivo
 
-## ⚙️ Instalação
+## 📦 Instalação
 
-### Pré-requisitos:
-- Node.js (v16 ou superior)
-- npm
+### Pré-requisitos
+- Node.js (versão 16 ou superior)
+- npm ou yarn
 
-### Backend:
-
+### Backend
 ```bash
 cd backend
 npm install
 npm start
 ```
 
-> O servidor roda em [http://localhost:3000](http://localhost:3000)
-
-### Frontend:
-
+### Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-> O frontend roda em [http://localhost:5173](http://localhost:5173)
+## 🗄️ Estrutura do Banco de Dados
 
-### Configuração:
+### Tabelas Principais
+- **users**: Usuários do sistema
+- **posts**: Posts do fórum
+- **comments**: Comentários nos posts
 
-- O banco SQLite (`database.sqlite`) é criado automaticamente no diretório `backend`.
-- Certifique-se de que as portas `3000` (backend) e `5173` (frontend) estão livres.
+## 🔧 Configuração
 
----
+### Variáveis de Ambiente
+Crie um arquivo `.env` no backend:
 
-## 🚀 Uso
-
-1. Acesse [http://localhost:5173](http://localhost:5173) no navegador.
-2. Registre-se ou faça login.
-3. Crie, edite ou exclua posts.
-4. Adicione comentários aos posts.
-
----
-
-## 🗂️ Estrutura do Projeto
-
-```
-backend/
-├── src/
-│   ├── routes/           # Rotas para autenticação, posts e comentários
-│   ├── database.js       # Configuração do SQLite
-│   └── server.js         # Servidor Express
-
-frontend/
-├── src/
-│   ├── components/       # Componentes Vue (Login, PostList, PostForm)
-│   └── router.js         # Configuração do Vue Router
+```env
+PORT=3000
+JWT_SECRET=my_secure_jwt_secret
 ```
 
----
+### Migrações
+```bash
+cd backend
+npx knex migrate:latest
+```
 
-## 🧪 Testes
+## 🔒 Segurança
 
-Use **Postman** para testar as rotas do backend:
+- Autenticação JWT para todas as operações
+- Sanitização de HTML para prevenir XSS
+- Validação de entrada em todas as rotas
+- Proteção contra CSRF
+- Upload seguro de arquivos
 
-- `POST http://localhost:3000/api/auth/register`
-- `POST http://localhost:3000/api/auth/login`
-- `GET/POST/PUT/DELETE http://localhost:3000/api/posts`
+## 📱 Responsividade
 
-> Verifique erros no console do navegador (F12) e do backend.
+O sistema é totalmente responsivo e funciona em:
+- Desktop (1200px+)
+- Tablet (768px - 1199px)
+- Mobile (320px - 767px)
 
----
+## 🚀 Deploy
+
+### Backend
+```bash
+cd backend
+npm install --production
+npm start
+```
+
+### Frontend
+```bash
+cd frontend
+npm run build
+```
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
 ## 📄 Licença
 
-MIT License  
-Copyright (c) 2025 Halfstrom
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy  
-of this software and associated documentation files (the "Software"), to deal  
-in the Software without restriction, including without limitation the rights  
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
-copies of the Software, and to permit persons to whom the Software is  
-furnished to do so, subject to the following conditions:
+## 🆘 Suporte
 
-The above copyright notice and this permission notice shall be included in all  
-copies or substantial portions of the Software.
+Se você encontrar algum problema ou tiver dúvidas, abra uma issue no GitHub.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  
-SOFTWARE.
+---
+
+**Desenvolvido com ❤️ para a comunidade**
